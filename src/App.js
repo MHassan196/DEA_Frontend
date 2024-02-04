@@ -1,23 +1,23 @@
-import logo from './logo.svg';
 import './App.css';
+import MainPage from './pages/MainPage';
+import LoginForm from './Components/LoginForm';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 function App() {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Function to set isLoggedIn state when user is successfully logged in
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {/* If isLoggedIn is true, display MainPage, otherwise display the login form */}
+      {isLoggedIn ? <MainPage /> : <LoginForm onLoginSuccess={handleLoginSuccess} />}
     </div>
   );
 }
