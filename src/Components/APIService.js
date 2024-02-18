@@ -78,6 +78,187 @@ export default class APIService {
       throw new Error('Failed to update user data');
     });
   };
+
+
+  static uploadDataAPI = (formData) => {
+    return fetch('http://127.0.0.1:8000/main_api/upload/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+      body: formData,
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Data upload failed');
+      }
+      return response.json();
+    })
+    .catch(error => {
+      throw error;
+    });
+  };
+
+  static uploadImageAPI = (formData) => {
+    return fetch('http://127.0.0.1:8000/main_api/upload/image/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+      body: formData,
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Image upload failed');
+      }
+      return response.json();
+    })
+    .catch(error => {
+      throw error;
+    });
+  };
+
+  static fetchExtractedData = () => {
+    return fetch('http://127.0.0.1:8000/main_api/fetch_extracted_data/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    }).then(response => response.json());
+  };
   
+  static fetchDocumentData = (collectionName) => {
+    return fetch(`http://127.0.0.1:8000/main_api/fetch_collection_data/${collectionName}/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    }).then(response => response.json());
+  };
+
+
+  // static updateDocumentData = (id, updatedData) => {
+  //   // const token = localStorage.getItem('token');
+  //   return fetch(`http://127.0.0.1:8000/main_api/update_document/${id}/`, {
+  //       method: 'PATCH',
+  //       headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Token ${localStorage.getItem('token')}`,
+  //       },
+  //       body: JSON.stringify({ updatedData }),
+  //   }).then(response => {
+  //       if (response.ok) {
+  //           return response.json();
+  //       }
+  //       throw new Error('Failed to update document data');
+  //   });
+  // };
+
+  static updateDocumentData = (id, updatedData) => {
+    const token = localStorage.getItem('token');
+    const formattedData = JSON.stringify(updatedData.map(item => ({ ...item }))); // Ensure each item is a separate object
+    return fetch(`http://127.0.0.1:8000/main_api/update_document/${id}/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`,
+        },
+        body: formattedData,
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Failed to update document data');
+    });
+};
+
+static deleteDocument = (documentId) => {
+  const token = localStorage.getItem('token');
+  return fetch(`http://127.0.0.1:8000/main_api/delete_document/${documentId}/`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+  }).then(response => response.json());
+};
+
+  
+  // static updateCustomizeData = (id, updatedData) => {
+  //   // const token = localStorage.getItem('token');
+  //   return fetch(`http://127.0.0.1:8000/main_api/customize_document/${id}/`, {
+  //       method: 'PATCH',
+  //       headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Token ${localStorage.getItem('token')}`,
+  //       },
+  //       body: JSON.stringify({ updatedData }),
+  //   }).then(response => {
+  //       if (response.ok) {
+  //           return response.json();
+  //       }
+  //       throw new Error('Failed to update document data');
+  //   });
+  // };
+
+  static uploadHandwrittenAPI = (formData) => {
+    return fetch('http://127.0.0.1:8000/handwriting_recognition/process_image/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+      body: formData,
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Image upload failed');
+      }
+      return response.json();
+    })
+    .catch(error => {
+      throw error;
+    });
+  };
+
+
+  static fetchHandwrittenData = () => {
+    return fetch('http://127.0.0.1:8000/handwriting_recognition/fetch_handwritten_data/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    }).then(response => response.json());
+  };
+
+  static updateHandwrittenDocument = (id, updatedData) => {
+    const token = localStorage.getItem('token');
+    return fetch(`http://127.0.0.1:8000/handwriting_recognition/update_handwritten_data/${id}/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`,
+      },
+      body: JSON.stringify(updatedData),
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error('Failed to update handwritten document data');
+    });
+  };
+
+  static deleteHandwrittenDocument = (documentId) => {
+    const token = localStorage.getItem('token');
+    return fetch(`http://127.0.0.1:8000/handwriting_recognition/delete_hand_document/${documentId}/`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`,
+      },
+    }).then(response => response.json());
+  };
 
 }
+
+
+

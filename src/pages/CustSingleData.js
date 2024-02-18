@@ -1,30 +1,97 @@
-import React, { useState, useEffect } from 'react'
-import { Table, Pagination } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react'
+import { Table, Pagination, Modal, Button, Form, Badge } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../pages/MainPage.css'
-function CustSingleData() {
+import APIService from '../Components/APIService';
+import { useSnackbar } from 'notistack';
 
+
+function CustSingleData({ collectionName, handleSidebarItemClick }) {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
+    const [extractedData, setExtractedData] = useState([]);
+    const [showFieldsModal, setShowFieldsModals] = useState(false);
+    const [selectedFields, setSelectedFields] = useState([]);
+    const [availableFields, setAvailableFields] = useState([]);
+
+    const { enqueueSnackbar } = useSnackbar()
+
+    const handleFieldsModalClose = () => {
+        // setSelectedFields([])
+        setShowFieldsModals(false);
+    }
+    const handleFieldsModalShow = () => {
+        setAvailableFields(Object.keys(data[0]));
+        console.log("Available Fields Now: ", availableFields)
+        setSelectedFields([...selectedFields]);
+        setShowFieldsModals(true);
+    }
+
+    const handleFieldSelect = (field) => {
+        // Check if the field is already selected
+        if (!selectedFields.includes(field)) {
+            setSelectedFields([...selectedFields, field])
+        }
+    }
+
+    const handleRemoveField = (fieldToRemove) => {
+        setSelectedFields(selectedFields.filter((field) => field !== fieldToRemove));
+    }
+
+    const handleApplyFields = () => {
+        console.log('Selected Fields ', selectedFields);
+
+        // Update the UI to display selected fields
+        const columnsToShow = selectedFields.length > 0 ? selectedFields : Object.keys(data[0]);
+        setData((prevData) =>
+            prevData.map((record) => {
+                const filteredRecord = {};
+                columnsToShow.forEach((column) => {
+                    filteredRecord[column] = record[column];
+                });
+                return filteredRecord;
+            })
+        );
+
+        // setAvailableFields(Object.keys(data[0]));
+        // Close the modal
+        handleFieldsModalClose();
+    };
+
+    const handleResetFields = () => {
+        // Reset selected fields
+        setSelectedFields([]);
+
+        // Reset data to show all columns
+        const initialData = JSON.parse(selectedDocument.extracted_data);
+        setData(initialData);
+
+        console.log("reset fields: ", columns)
+    };
 
     useEffect(() => {
-        const generateDummyData = () => {
-            let dummyData = [];
-            for (let i = 1; i <= 45; i++) {
-                dummyData.push({
-                    id: i,
-                    name: `User ${i}`,
-                    email: `user${i}@example.com`,
-                    age: Math.floor(Math.random() * 30) + 20,
-                });
-            }
-            return dummyData;
-        };
 
-        const dummyData = generateDummyData();
-        setData(dummyData);
+        fetchExtractedData()
+
     }, []);
+    console.log("collection name is ", collectionName)
+    console.log("Available Fields ", availableFields)
+
+    const fetchExtractedData = () => {
+        // Call the fetchExtractedData method from your APIService
+        APIService.fetchExtractedData()
+            .then(response => {
+                if (response.extracted_data) {
+                    setExtractedData(response.extracted_data);
+                    // setAvailableFields(Object.keys(response.extracted_data[0]));
+                } else {
+                    console.error('Error fetching extracted data:', response.error);
+                }
+            })
+            .catch(error => console.error('Error fetching extracted data:', error));
+    };
+
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
@@ -32,40 +99,122 @@ function CustSingleData() {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  return (
-    <div>
+    // Ensure that data is defined before attempting to map over it
+    const columns = data.length > 0 ? Object.keys(data[0]) : [];
+
+    // Filter extractedData based on collectionName
+    const selectedDocument = extractedData.find(doc => doc.dynamic_collection_name.toLowerCase() === collectionName);
+
+    useEffect(() => {
+        // Fetch data for the selected collection when the component mounts
+        if (collectionName && selectedDocument) {
+            // Parse the JSON string in extracted_data and set it as data
+            const parsedData = JSON.parse(selectedDocument.extracted_data);
+            setData(parsedData);
+        }
+    }, [collectionName, selectedDocument]);
+
+    const handleSave = () => {
+        const updatedData = data.map((record) => {
+            const updatedRecord = {};
+            selectedFields.forEach((field) => {
+                updatedRecord[field] = record[field];
+            });
+            return updatedRecord;
+        });
+
+        const documentId = selectedDocument ? selectedDocument.id : null;
+
+        // Make a PATCH request to update the document
+        APIService.updateDocumentData(documentId, updatedData)
+            .then(data => {
+                if (data.message) {
+                    console.log('Document updated successfully');
+                    // Optionally, you can handle success scenarios
+                    enqueueSnackbar('Updated Successfully', { variant: 'success' });
+
+                } else {
+                    console.error('Failed to update document:', data.error);
+                    // Handle error scenarios
+                    enqueueSnackbar('Error Updating Data', { variant: 'error' });
+                }
+            })
+            .catch(error => console.error('Error updating document:', error));
+    };
+
+    return (
+        <div>
             <div className='cont-text'>
-                {/* Your ViewData content goes here */}
                 <div className="dataHead">
                     <div>
-                    <h2>Sales Data</h2>
+                        {/* Display the name of the selected document */}
+                        <h2>{selectedDocument ? selectedDocument.name : ''}</h2>
                     </div>
                     <div className="dataOptions">
-                        <button className="downloadBtn">
-                            <i className="fas fa-download"></i>
+                        <button className="downloadBtn" onClick={handleSave}>
+                            Save
                         </button>
-                        
-                    </div>
-                </div>
+                        <button className="CustBtn" onClick={handleFieldsModalShow}>
+                            Select Fields
+                        </button>
+                        <button className="CustBtn" onClick={handleResetFields}>
+                            Reset
+                        </button>
 
+                    </div>
+
+                    <Modal show={showFieldsModal} onHide={handleFieldsModalClose} size='lg'>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Select Fields</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form>
+                                <Form.Group controlId="fieldDropdown">
+                                    <Form.Label>Select Fields</Form.Label>
+                                    <Form.Control as="select" multiple onChange={(e) => handleFieldSelect(e.target.value)}>
+                                        {availableFields.map((column, index) => (
+                                            <option key={index} disabled={selectedFields.includes(column)}>{column}</option>
+                                        ))}
+                                    </Form.Control>
+                                </Form.Group>
+                                <Form.Group controlId="selectedFields" className='badges-list'>
+                                    <Form.Label>Selected Fields</Form.Label>
+                                    <div>
+                                        {selectedFields.map((field, index) => (
+                                            <Badge key={index} bg="secondary" className="mr-2 badge-custom">
+                                                {field} <span onClick={() => handleRemoveField(field)}>&times;</span>
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </Form.Group>
+                            </Form>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={handleFieldsModalClose}>
+                                Close
+                            </Button>
+                            <Button variant="primary" onClick={handleApplyFields}>
+                                Apply Fields
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                </div>
 
                 <div className="mt-4">
                     <Table striped bordered hover variant="dark" className="custom-table" >
-                        <thead class="table-secondary">
+                        <thead className="table-secondary">
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Age</th>
+                                {columns.map((column, index) => (
+                                    <th key={index}>{column}</th>
+                                ))}
                             </tr>
                         </thead>
-                        <tbody >
-                            {currentRecords.map((record) => (
-                                <tr key={record.id}>
-                                    <td>{record.id}</td>
-                                    <td>{record.name}</td>
-                                    <td>{record.email}</td>
-                                    <td>{record.age}</td>
+                        <tbody>
+                            {currentRecords.map((record, recordIndex) => (
+                                <tr key={recordIndex}>
+                                    {columns.map((column, columnIndex) => (
+                                        <td key={columnIndex}>{record[column]}</td>
+                                    ))}
                                 </tr>
                             ))}
                         </tbody>
@@ -77,10 +226,11 @@ function CustSingleData() {
                             </Pagination.Item>
                         ))}
                     </Pagination>
+
                 </div>
             </div>
         </div>
-  )
+    )
 }
 
 export default CustSingleData

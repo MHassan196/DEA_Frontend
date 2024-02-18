@@ -16,6 +16,11 @@ import Profile from './Profile';
 import EditProfile from './EditProfile';
 import SingleData from './SingleData';
 import CustSingleData from './CustSingleData';
+import HandwrittenData from './HandwrittenData';
+import EditData from './EditData';
+import ViewHandwrittenData from './ViewHandwrittenData';
+import SingleHandwrittenData from './SingleHandwrittenData';
+import EditHandwrittenData from './EditHandwrittenData';
 
 
 function MainPage() {
@@ -23,6 +28,8 @@ function MainPage() {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedItem, setSelectedItem] = useState('dashboard');
+  const [selectedCollection, setSelectedCollection] = useState(null);
+
 
   useEffect(() => {
 
@@ -39,8 +46,10 @@ function MainPage() {
     setIsSidebarOpen((prevIsOpen) => !prevIsOpen);
   };
 
-  const handleSidebarItemClick = (item) => {
+  const handleSidebarItemClick = (item, collectionName = null) => {
     setSelectedItem(item);
+    setSelectedCollection(collectionName);
+
   };
 
 
@@ -84,6 +93,7 @@ function MainPage() {
         <div className="main-content">
           {selectedItem === 'dashboard' && <Dashboard />}
           {selectedItem === 'upload' && <UploadFile />}
+          {selectedItem === 'handwritten' && <HandwrittenData />}
           {selectedItem === 'view' && <ViewData handleSidebarItemClick={handleSidebarItemClick} />}
           {selectedItem === 'customize' && <CustomizeData handleSidebarItemClick={handleSidebarItemClick} />}
           {selectedItem === 'contact' && <ContactUs />}
@@ -91,8 +101,12 @@ function MainPage() {
           {selectedItem === 'faq' && <Faq />}
           {selectedItem === 'profile' && <Profile handleSidebarItemClick={handleSidebarItemClick} />}
           {selectedItem === 'edit-profile' && <EditProfile handleSidebarItemClick={handleSidebarItemClick} />}
-          {selectedItem === 'data' && <SingleData handleSidebarItemClick={handleSidebarItemClick} />}
-          {selectedItem === 'custdata' && <CustSingleData handleSidebarItemClick={handleSidebarItemClick} />}
+          {selectedItem === 'data' && <SingleData collectionName={selectedCollection} handleSidebarItemClick={handleSidebarItemClick} />}
+          {selectedItem === 'editdata' && <EditData collectionName={selectedCollection} handleSidebarItemClick={handleSidebarItemClick} />}
+          {selectedItem === 'custdata' && <CustSingleData collectionName={selectedCollection} handleSidebarItemClick={handleSidebarItemClick} />}
+          {selectedItem === 'viewhanddata' && <ViewHandwrittenData handleSidebarItemClick={handleSidebarItemClick} />}
+          {selectedItem === 'singlehanddata' && <SingleHandwrittenData collectionName={selectedCollection} handleSidebarItemClick={handleSidebarItemClick} />}
+          {selectedItem === 'handeditdata' && <EditHandwrittenData collectionName={selectedCollection} handleSidebarItemClick={handleSidebarItemClick} />}
         </div>
 
         {/* <Content/> */}

@@ -4,7 +4,7 @@ import { ImageConfig } from '../../config/ImageConfig';
 import uploadImg from '../../assets/images/cloud-upload-regular-240.png';
 import APIService from '../APIService';
 
-const DropFileInput = ({ onFileChange }) => {
+const HandwrittenFileInput = ({ onFileChange }) => {
 
     const wrapperRef = useRef(null);
     const { enqueueSnackbar } = useSnackbar(); // Destructure enqueueSnackbar from useSnackbar
@@ -22,7 +22,7 @@ const DropFileInput = ({ onFileChange }) => {
         const newFile = e.target.files[0];
         if (newFile) {
             if (fileList.length === 0) {
-                const allowedExtensions = ['pdf', 'docx', 'doc', 'xlsx', 'xls', 'png', 'jpg', 'gif']
+                const allowedExtensions = ['png', 'jpg']
                 const fileExtension = newFile.name.split('.').pop().toLowerCase();
 
                 if (allowedExtensions.includes(fileExtension)) {
@@ -31,15 +31,9 @@ const DropFileInput = ({ onFileChange }) => {
                     onFileChange([newFile]);
                     setFileName(""); // Clear the name input field
 
-                    // Check if it's an image file
-                    // if (['png', 'jpg', 'gif'].includes(fileExtension)) {
-                    //     callUploadImageAPI(newFile);
-                    // } else {
-                    //     callUploadDataAPI(newFile);
-                    // }
                 }
                 else {
-                    enqueueSnackbar('Invalid file type. Please upload file with extensions: pdf, docx, doc, xlsx, xls, png, jpg, gif', { variant: 'error' });
+                    enqueueSnackbar('Invalid file type. Please upload file with extensions: png, jpga', { variant: 'error' });
                 }
             } else {
                 // If a file is already present, show an error message
@@ -63,57 +57,30 @@ const DropFileInput = ({ onFileChange }) => {
         // Now you can call the appropriate API based on the file type
         if (fileList.length > 0) {
             const file = fileList[0];
-            const fileExtension = file.name.split('.').pop().toLowerCase();
-
-            if (['png', 'jpg', 'gif'].includes(fileExtension)) {
-                callUploadImageAPI(file, fileName);
-            } else {
-                callUploadDataAPI(file, fileName);
-            }
-        } else {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('name', fileName);
+      
+            APIService.uploadHandwrittenAPI(formData)
+              .then(response => {
+                // Handle the response as needed
+                enqueueSnackbar('Data Extracted Successfully', { variant: 'success' });
+                setFileName("");
+                setFileList([]);
+              })
+              .catch(error => {
+                enqueueSnackbar('No data extracted or invalid data format. Please try again.', { variant: 'error' });
+              })
+              .finally(() => {
+                setLoading(false);
+            });
+          } else {
             setLoading(false);
-            // Handle the case where no file is present
             enqueueSnackbar('Please upload a file before clicking the Upload button.', { variant: 'error' });
-        }
+          }
     }
 
-    const callUploadDataAPI = (file, fileName) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('name', fileName);
-
-        APIService.uploadDataAPI(formData)
-            .then(response => {
-                enqueueSnackbar('Data Extracted Successfully', { variant: 'success' });
-                setFileName("");
-                setFileList([]);
-            })
-            .catch(error => {
-                enqueueSnackbar('No data extracted or invalid data format. Please try again.', { variant: 'error' });
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-
-    const callUploadImageAPI = (file, fileName) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('name', fileName);
-
-        APIService.uploadImageAPI(formData)
-            .then(response => {
-                enqueueSnackbar('Data Extracted Successfully', { variant: 'success' });
-                setFileName("");
-                setFileList([]);
-            })
-            .catch(error => {
-                enqueueSnackbar('No data extracted or invalid data format. Please try again.', { variant: 'error' });
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
+   
 
     const fileRemove = () => {
         setFileList([]);  // Clear the file list
@@ -134,7 +101,7 @@ const DropFileInput = ({ onFileChange }) => {
                     <p>Drag & Drop your file here </p>
 
                 </div>
-                <input type="file" value="" onChange={onFileDrop} accept='.pdf, .docx, .doc, .xlsx, .xls, .png, .jpg, .gif' />
+                <input type="file" value="" onChange={onFileDrop} accept='.png, .jpg' />
             </div>
             {
                 fileList.length > 0 ? (
@@ -201,4 +168,4 @@ const DropFileInput = ({ onFileChange }) => {
 }
 
 
-export default DropFileInput;
+export default HandwrittenFileInput;

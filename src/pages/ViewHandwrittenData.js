@@ -2,19 +2,24 @@ import React, { useState, useEffect } from "react";
 import "../pages/MainPage.css";
 import APIService from "../Components/APIService";
 import LoadingSkeleton from "../Components/LoadingSkeleton";
+import { useSnackbar } from 'notistack';
 
-function CustomizeData({ handleSidebarItemClick }) {
+
+function ViewHandwrittenData({ handleSidebarItemClick }) {
   const [extractedData, setExtractedData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { enqueueSnackbar } = useSnackbar(); // Destructure enqueueSnackbar from useSnackbar
+
+
   useEffect(() => {
     // Fetch extracted data when the component mounts
-    fetchExtractedData();
+    fetchHandwrittenData();
   }, []);
 
-  const fetchExtractedData = () => {
+  const fetchHandwrittenData = () => {
     // Call the fetchExtractedData method from your APIService
-    APIService.fetchExtractedData()
+    APIService.fetchHandwrittenData()
       .then((response) => {
         if (response.extracted_data) {
           setExtractedData(response.extracted_data);
@@ -29,11 +34,14 @@ function CustomizeData({ handleSidebarItemClick }) {
       });
   };
 
-  const handleCogsIconClick = (collectionName) => {
-
-    handleSidebarItemClick("custdata", collectionName);
+  const handleEyeIconClick = (id) => {
+    
+    handleSidebarItemClick("singlehanddata", id);
   };
-  
+  const handleEditIconClick = (collectionName) => {
+    
+    handleSidebarItemClick("handeditdata", collectionName);
+  };
 
   const formatDate = (dateString) => {
     const dateObject = new Date(dateString);
@@ -43,11 +51,30 @@ function CustomizeData({ handleSidebarItemClick }) {
     return `${day}/${month}/${year}`;
   };
 
+  const handleDeleteIconClick = (documentId) => {
+    // Call the deleteDocument API method from APIService
+    APIService.deleteHandwrittenDocument(documentId)
+      .then((response) => {
+        if (response.message) {
+          // Document deleted successfully
+          enqueueSnackbar('Data Deleted Successfully', { variant: 'success' });
+
+          // Refresh the extracted data after deletion
+          fetchHandwrittenData();
+        } else {
+          enqueueSnackbar('Error Deleting Data', { variant: 'error' });
+          console.error("Error deleting document:", response.error);
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting document:", error);
+      });
+  };
+
   return (
-    
 
     <div className='cont-text'>
-      <h2>Customize Data</h2>
+      <h2>Extracted Handwritten Data</h2>
       {loading ? (
         <LoadingSkeleton />
       ) : (
@@ -67,17 +94,29 @@ function CustomizeData({ handleSidebarItemClick }) {
                   <button
                     className="dataView"
                     onClick={() =>
-                      handleCogsIconClick(
-                        doc.dynamic_collection_name.toLowerCase()
+                      handleEyeIconClick(
+                        doc.id
+                      )
+                    // console.log(doc.id)
+                    }
+                  >
+                    <i className="fas fa-eye"></i>
+                  </button>
+                  <button
+                    className="dataView"
+                    onClick={() =>
+                      handleEditIconClick(
+                        doc.id
                       )
                     }
                   >
-                    <i className="fas fa-cogs"></i>
+                    <i className="fas fa-edit"></i>
+                  </button>
+                  <button className="dataView" onClick={() => handleDeleteIconClick(doc.id)}>
+                    <i className="fas fa-trash"></i>
+
                   </button>
                   
-                  {/* <button className="dataCust">
-                    <i className="fas fa-cogs"></i>
-                  </button> */}
                 </div>
               </div>
             ))
@@ -88,9 +127,9 @@ function CustomizeData({ handleSidebarItemClick }) {
           )}
         </div>
       )}
-     
+      
     </div>
   );
 }
 
-export default CustomizeData;
+export default ViewHandwrittenData;

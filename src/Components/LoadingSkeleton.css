@@ -1,0 +1,48 @@
+/* LoadingSkeleton.css */
+
+.loading-skeleton-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.loading-skeleton-lines {
+    height: 100px;
+    width: 100%;
+    margin: 10px 0;
+    /* background-position: 100% 0; */
+    background-color: #2f4473;
+    /* background-size: 200% 100%; */
+    animation: loading 3s infinite;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 #040b1c;
+}
+
+@keyframes loading {
+    0% {
+      background-color: #2f4473; /* Start color */
+    }
+    50% {
+      background-color: #26375b; /* Middle color */
+    }
+    100% {
+      background-color: #1c2944; /* End color, back to the start */
+    }
+  }
+
+@media screen and (max-width: 500px) {
+
+    .loading-skeleton-lines {
+        height: 15px;
+        margin-bottom: 7px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+  
+
+    .loading-skeleton-lines {
+        height: 10px;
+        margin-bottom: 5px;
+    }
+}

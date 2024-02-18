@@ -9,6 +9,7 @@ import Faq from '../../pages/Faq';
 import MainPage from '../../pages/MainPage';
 import Dashboard from '../../pages/Dashboard';
 import Profile from '../../pages/Profile';
+import SingleData from '../../pages/SingleData';
 
 
 function Content() {
@@ -23,6 +24,7 @@ function Content() {
           <Route exact path="/about" Component={AboutUs} />
           <Route exact path="/faq" Component={Faq} />
           <Route exact path="/profile" Component={Profile} />
+          {/* <Route path="/data/:collectionName" element={<SingleData />} /> */}
 
         </Routes>
     </div>

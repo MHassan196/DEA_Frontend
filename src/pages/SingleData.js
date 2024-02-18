@@ -2,30 +2,63 @@ import React, { useState, useEffect } from 'react'
 import { Table, Pagination } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../pages/MainPage.css'
+import APIService from '../Components/APIService';
 
 
-function SingleData() {
+function SingleData({ collectionName, handleSidebarItemClick }) {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage] = useState(10);
+    const [extractedData, setExtractedData] = useState([]);
 
+    // useEffect(() => {
+    //     // const lowercaseCollectionName = collectionName.toLowerCase();
+    //     // Fetch data for the selected collection when the component mounts
+    //     if (collectionName) {
+    //         fetchCollectionData(collectionName);
+    //     }
+    //     console.log(collectionName)
+
+    //     fetchExtractedData()
+
+    // }, [collectionName]);
     useEffect(() => {
-        const generateDummyData = () => {
-            let dummyData = [];
-            for (let i = 1; i <= 45; i++) {
-                dummyData.push({
-                    id: i,
-                    name: `User ${i}`,
-                    email: `user${i}@example.com`,
-                    age: Math.floor(Math.random() * 30) + 20,
-                });
-            }
-            return dummyData;
-        };
 
-        const dummyData = generateDummyData();
-        setData(dummyData);
+        fetchExtractedData()
+
     }, []);
+    // const lowercaseCollectionName = collectionName.toLowerCase();
+    // console.log(lowercaseCollectionName)
+    console.log("collection name is ", collectionName)
+
+    const fetchExtractedData = () => {
+        // Call the fetchExtractedData method from your APIService
+        APIService.fetchExtractedData()
+            .then(response => {
+                if (response.extracted_data) {
+                    setExtractedData(response.extracted_data);
+                } else {
+                    console.error('Error fetching extracted data:', response.error);
+                }
+            })
+            .catch(error => console.error('Error fetching extracted data:', error));
+    };
+
+    // const fetchCollectionData = (collectionName) => {
+    //     console.log("Fetch from ", collectionName)
+    //     if (collectionName) {
+    //         APIService.fetchDocumentData(collectionName)
+    //             .then(response => {
+    //                 if (response.collection_data) {
+    //                     console.log(data)
+    //                     setData(response.collection_data);
+    //                 } else {
+    //                     console.error('Error fetching collection data:', response.error || 'No data received');
+    //                 }
+    //             })
+    //             .catch(error => console.error('Error fetching collection data:', error));
+    //     }
+    // };
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
@@ -33,42 +66,72 @@ function SingleData() {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+    // Ensure that data is defined before attempting to map over it
+    const columns = data.length > 0 ? Object.keys(data[0]) : [];
+
+    // Filter extractedData based on collectionName
+    const selectedDocument = extractedData.find(doc => doc.dynamic_collection_name.toLowerCase() === collectionName);
+
+    const handleEditIconClick = (collectionName) => {
+        // setSelectedCollection(collectionName);
+        // // handleSidebarItemClick('data'); // Assuming 'data' corresponds to the route for SingleData
+        // setSwitchTurn(true);
+    
+        // console.log(collectionName)
+        handleSidebarItemClick('editdata', collectionName);
+    
+      };
+    const handleCogsIconClick = (collectionName) => {
+      
+        handleSidebarItemClick('custdata', collectionName);
+    
+      };
+
+      useEffect(() => {
+        // Fetch data for the selected collection when the component mounts
+        if (collectionName && selectedDocument) {
+          // Parse the JSON string in extracted_data and set it as data
+          const parsedData = JSON.parse(selectedDocument.extracted_data);
+          setData(parsedData);
+        }
+      }, [collectionName, selectedDocument]);
+
     return (
         <div>
             <div className='cont-text'>
-                {/* Your ViewData content goes here */}
                 <div className="dataHead">
                     <div>
-                    <h2>Sales Data</h2>
+                        {/* Display the name of the selected document */}
+                        <h2>{selectedDocument ? selectedDocument.name : ''}</h2>
                     </div>
                     <div className="dataOptions">
                         <button className="downloadBtn">
                             <i className="fas fa-download"></i>
                         </button>
-                        <button className="CustBtn">
+                        <button className="CustBtn" onClick={() => handleCogsIconClick(selectedDocument.dynamic_collection_name.toLowerCase())}>
                             <i className="fas fa-cogs"></i>
+                        </button>
+                        <button className="CustBtn" onClick={() => handleEditIconClick(selectedDocument.dynamic_collection_name.toLowerCase())}>
+                            <i className="fas fa-edit"></i>
                         </button>
                     </div>
                 </div>
 
-
                 <div className="mt-4">
                     <Table striped bordered hover variant="dark" className="custom-table" >
-                        <thead class="table-secondary">
+                        <thead className="table-secondary">
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Age</th>
+                                {columns.map((column, index) => (
+                                    <th key={index}>{column}</th>
+                                ))}
                             </tr>
                         </thead>
-                        <tbody >
-                            {currentRecords.map((record) => (
-                                <tr key={record.id}>
-                                    <td>{record.id}</td>
-                                    <td>{record.name}</td>
-                                    <td>{record.email}</td>
-                                    <td>{record.age}</td>
+                        <tbody>
+                            {currentRecords.map((record, recordIndex) => (
+                                <tr key={recordIndex}>
+                                    {columns.map((column, columnIndex) => (
+                                        <td key={columnIndex}>{record[column]}</td>
+                                    ))}
                                 </tr>
                             ))}
                         </tbody>
@@ -80,6 +143,7 @@ function SingleData() {
                             </Pagination.Item>
                         ))}
                     </Pagination>
+
                 </div>
             </div>
         </div>

@@ -47,46 +47,58 @@ const Sidebar = ({handleSidebarItemClick}) => {
 
             <nav className={`navbar ${isSidebarOpen ? '' : 'centered'}`}>
                 <ul>
-                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`}>
-                        <div onClick={() => handleSidebarItemClick('dashboard')}>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('dashboard')}>
+                        <div >
                             <i className="fas fa-home"></i>
                             {isSidebarOpen && <span>Dashboard</span>}
                         </div>
                     </li>
                     <p className='category'>Data</p>
-                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`}>
-                        <div onClick={() => handleSidebarItemClick('upload')}>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('upload')}>
+                        <div >
                             <i className="fas fa-upload"></i>
                             {isSidebarOpen && <span>Upload File</span>}
                         </div>
                     </li>
-                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`}>
-                        <div onClick={() => handleSidebarItemClick('view')}>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('handwritten')}>
+                        <div >
+                            <i className="fas fa-file-lines"></i>
+                            {isSidebarOpen && <span>Handwritten Data</span>}
+                        </div>
+                    </li>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('view')}>
+                        <div >
                             <i className="fas fa-eye"></i>
                             {isSidebarOpen && <span>View Data</span>}
                         </div>
                     </li>
-                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`}>
-                        <div onClick={() => handleSidebarItemClick('customize')}>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('viewhanddata')}>
+                        <div >
+                            <i className="fas fa-eye"></i>
+                            {isSidebarOpen && <span>View Handwritten Data</span>}
+                        </div>
+                    </li>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('customize')}>
+                        <div >
                             <i className="fas fa-cogs"></i>
                             {isSidebarOpen && <span>Customize Data</span>}
                         </div>
                     </li>
                     <p className='category'>Pages</p>
-                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`}>
-                        <div onClick={() => handleSidebarItemClick('contact')}>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('contact')}>
+                        <div >
                             <i className="fas fa-envelope"></i>
                             {isSidebarOpen && <span>Contact Us</span>}
                         </div>
                     </li>
-                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`}>
-                        <div onClick={() => handleSidebarItemClick('about')}>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('about')}>
+                        <div >
                             <i className="fas fa-info-circle"></i>
                             {isSidebarOpen && <span>About Us</span>}
                         </div>
                     </li>
-                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`}>
-                        <div onClick={() => handleSidebarItemClick('faq')}>
+                    <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('faq')}>
+                        <div >
                             <i className="fas fa-circle-question"></i>
                             {isSidebarOpen && <span>FAQs</span>}
                         </div>
