@@ -6,60 +6,16 @@ import {
   faFilePdf,
   faFileExcel,
   faFileWord,
+  faFileImage
 } from "@fortawesome/free-solid-svg-icons";
 import APIService from "../Components/APIService";
 
-// Sample recent documents data
-const recentDocuments = [
-  {
-    id: 1,
-    name: "Document 1",
-    date: "2023-12-20",
-    type: "pdf",
-    size: "2.5 MB",
-  },
-  {
-    id: 2,
-    name: "Document 2",
-    date: "2023-12-18",
-    type: "docx",
-    size: "1.8 MB",
-  },
-  {
-    id: 2,
-    name: "Document 2",
-    date: "2023-12-18",
-    type: "docx",
-    size: "1.8 MB",
-  },
-  {
-    id: 2,
-    name: "Document 2",
-    date: "2023-12-18",
-    type: "docx",
-    size: "1.8 MB",
-  },
-  {
-    id: 2,
-    name: "Document 2",
-    date: "2023-12-18",
-    type: "docx",
-    size: "1.8 MB",
-  },
-  {
-    id: 2,
-    name: "Document 2",
-    date: "2023-12-18",
-    type: "docx",
-    size: "1.8 MB",
-  },
-  // Add more sample documents as needed
-];
 
-const limitedRecentDocuments = recentDocuments.slice(0, 4);
 
 function Profile({ handleSidebarItemClick }) {
   const [userData, setUserData] = useState(null);
+  const [recentDocuments, setRecentDocuments] = useState([])
+  const [recentHandwrittenDocuments, setRecentHandwrittenDocuments] = useState([])
 
   useEffect(() => {
     // Fetch user data when the component mounts
@@ -70,9 +26,57 @@ function Profile({ handleSidebarItemClick }) {
       .catch((error) => {
         console.error("Error fetching user data:", error);
       });
+
+    fetchRecentDocuments();
+    fetchHandwrittenData();
   }, []);
+
+  const fetchRecentDocuments = () => {
+    APIService.fetchExtractedData()
+      .then((response) => {
+        if (response.extracted_data) {
+          const extractedData = response.extracted_data;
+          // Sort documents based on upload date in descending order
+          const sortedDocuments = extractedData.sort(
+            (a, b) =>
+              new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime()
+          );
+          const limitedRecentDocuments = sortedDocuments.slice(0, 4);
+          setRecentDocuments(limitedRecentDocuments);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching recent documents:", error)
+      })
+  }
+  const fetchHandwrittenData = () => {
+    APIService.fetchHandwrittenData()
+      .then((response) => {
+        if (response.extracted_data) {
+          const extractedData = response.extracted_data;
+          // Sort documents based on upload date in descending order
+          const sortedHandwrittenDocuments = extractedData.sort(
+            (a, b) =>
+              new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime()
+          );
+          const limitedRecentHandDocuments = sortedHandwrittenDocuments.slice(0, 4);
+          setRecentHandwrittenDocuments(limitedRecentHandDocuments);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching recent documents:", error)
+      })
+  }
   const baseUrl = "http://127.0.0.1:8000/";
   const profilePictureUrl = `${baseUrl}${userData?.profile_picture.replace('/', '')}`;
+
+  const formatDate = (dateString) => {
+    const dateObject = new Date(dateString);
+    const day = dateObject.getDate().toString().padStart(2, "0");
+    const month = (dateObject.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
+    const year = dateObject.getFullYear().toString().slice(-2); // Extract the last two digits of the year
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <div className="cont-text">
@@ -138,43 +142,115 @@ function Profile({ handleSidebarItemClick }) {
           </div>
         </div>
         <div className="lowerSec">
-          <div className="prof-top">
-            <h3>Recent Documents</h3>
-            <button className="edit-btn">View All</button>
+          <div className="firsthalf">
+
+
+            <div className="prof-top">
+              <h3>Recent Documents</h3>
+              <button className="edit-btn">View All</button>
+            </div>
+            <div className="recentDocuments">
+              {recentDocuments.map((doc) => (
+                <div key={doc.id} className="documentCard">
+                  <div className="docHeader">
+                    <div className="docTitle">
+                      <h4>{doc.name}</h4>
+                      <p>{formatDate(doc.upload_date)}</p>
+                    </div>
+                    <div className="docIcons">
+                      {/* Add icons for different file types */}
+                      {doc.file_type === "pdf" && <FontAwesomeIcon icon={faFilePdf} />}
+                      {doc.file_type === "docx" && (
+                        <FontAwesomeIcon icon={faFileWord} />
+                      )}
+                      {doc.file_type === "xlsx" && (
+                        <FontAwesomeIcon icon={faFileExcel} />
+                      )}
+                      {doc.file_type === "xls" && (
+                        <FontAwesomeIcon icon={faFileExcel} />
+                      )}
+                      {doc.file_type === "png" && (
+                        <FontAwesomeIcon icon={faFileImage} />
+                      )}
+                      {doc.file_type === "jpg" && (
+                        <FontAwesomeIcon icon={faFileImage} />
+                      )}
+
+                      {/* Add more icons for different file types */}
+                    </div>
+                  </div>
+                  <div className="docDetails">
+                    <div>
+                      <p>{doc.file.size}</p>
+                    </div>
+                    <div className="docActions">
+                      <button className="viewButton">
+                        <i className="fas fa-eye"></i>
+                      </button>
+                      <button className="customizeButton">
+                        <i className="fas fa-cogs"></i>
+                      </button>
+                      {/* Add more action buttons */}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="recentDocuments">
-            {limitedRecentDocuments.map((doc) => (
-              <div key={doc.id} className="documentCard">
-                <div className="docHeader">
-                  <div className="docTitle">
-                    <h4>{doc.name}</h4>
-                    <p>{doc.date}</p>
+          <div className="secondhalf">
+
+
+            <div className="prof-top">
+              <h3>Recent Handwritten Documents</h3>
+              <button className="edit-btn">View All</button>
+            </div>
+            <div className="recentDocuments">
+              {recentHandwrittenDocuments.map((doc) => (
+                <div key={doc.id} className="documentCard">
+                  <div className="docHeader">
+                    <div className="docTitle">
+                      <h4>{doc.name}</h4>
+                      <p>{formatDate(doc.upload_date)}</p>
+                    </div>
+                    <div className="docIcons">
+                      {/* Add icons for different file types */}
+                      {doc.file_type === "pdf" && <FontAwesomeIcon icon={faFilePdf} />}
+                      {doc.file_type === "docx" && (
+                        <FontAwesomeIcon icon={faFileWord} />
+                      )}
+                      {doc.file_type === "xlsx" && (
+                        <FontAwesomeIcon icon={faFileExcel} />
+                      )}
+                      {doc.file_type === "xls" && (
+                        <FontAwesomeIcon icon={faFileExcel} />
+                      )}
+                      {doc.file_type === "png" && (
+                        <FontAwesomeIcon icon={faFileImage} />
+                      )}
+                      {doc.file_type === "jpg" && (
+                        <FontAwesomeIcon icon={faFileImage} />
+                      )}
+
+                      {/* Add more icons for different file types */}
+                    </div>
                   </div>
-                  <div className="docIcons">
-                    {/* Add icons for different file types */}
-                    {doc.type === "pdf" && <FontAwesomeIcon icon={faFilePdf} />}
-                    {doc.type === "docx" && (
-                      <FontAwesomeIcon icon={faFileWord} />
-                    )}
-                    {/* Add more icons for different file types */}
+                  <div className="docDetails">
+                    <div>
+                      <p>{doc.file.size}</p>
+                    </div>
+                    <div className="docActions">
+                      <button className="viewButton">
+                        <i className="fas fa-eye"></i>
+                      </button>
+                      <button className="customizeButton">
+                        <i className="fas fa-cogs"></i>
+                      </button>
+                      {/* Add more action buttons */}
+                    </div>
                   </div>
                 </div>
-                <div className="docDetails">
-                  <div>
-                    <p>{doc.size}</p>
-                  </div>
-                  <div className="docActions">
-                    <button className="viewButton">
-                      <i className="fas fa-eye"></i>
-                    </button>
-                    <button className="customizeButton">
-                      <i className="fas fa-cogs"></i>
-                    </button>
-                    {/* Add more action buttons */}
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

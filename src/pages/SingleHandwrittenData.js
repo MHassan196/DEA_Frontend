@@ -62,9 +62,7 @@ function SingleHandwrittenData({ collectionName, handleSidebarItemClick }) {
                         <button className="downloadBtn">
                             <i className="fas fa-download"></i>
                         </button>
-                        <button className="CustBtn">
-                            <i className="fas fa-cogs"></i>
-                        </button>
+                        
                         <button className="CustBtn" onClick={() => handleEditIconClick(selectedDocument.id)}>
                             <i className="fas fa-edit"></i>
                         </button>

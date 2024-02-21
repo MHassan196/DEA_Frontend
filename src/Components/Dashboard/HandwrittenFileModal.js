@@ -41,12 +41,11 @@ function HandwrittenFileModal(props) {
       </Modal.Header>
       <Modal.Body style={customStyles.body}>
         <ul>
-          <li><strong>File Formats:</strong> Upload PDF, DOCX, DOC, XLSX, XLS, PNG, JPG, or GIF files.</li>
+          <li><strong>File Formats:</strong> Upload Handwritten Image</li>
           <li><strong>Data Extraction:</strong> System auto-extracts data; verify it in the dashboard.</li>
-          <li><strong>Data Viewing:</strong> Use "View Data" to inspect and verify tabular data.</li>
-          <li><strong>Customization:</strong> Customize data in "Customize Data" and save changes.</li>
+          <li><strong>Data Viewing:</strong> Use "View Handwritten Data" to inspect and verify data.</li>
           <li><strong>Editing Data:</strong> Correct errors in "Edit Data" and save for accuracy.</li>
-          <li><strong>Image Files:</strong> Upload clear PNG, JPG, or GIF images with tabular data.</li>
+          <li><strong>Image Files:</strong> Upload clear PNG or JPG images.</li>
           <li><strong>Data Storage:</strong> Securely store extracted data in the database.</li>
           <li><strong>User Assistance:</strong> FAQ section and "Contact Us" for support.</li>
         </ul>

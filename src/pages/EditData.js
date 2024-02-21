@@ -70,7 +70,7 @@ function EditData({ collectionName, handleSidebarItemClick }) {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // Ensure that data is defined before attempting to map over it
-    const columns = data.length > 0 ? Object.keys(data[0]) : [];
+    // const columns = data.length > 0 ? Object.keys(data[0]) : [];
 
     // Filter extractedData based on collectionName
     const selectedDocument = extractedData.find(doc => doc.dynamic_collection_name.toLowerCase() === collectionName);
@@ -110,13 +110,30 @@ function EditData({ collectionName, handleSidebarItemClick }) {
     
 
     useEffect(() => {
-        // Fetch data for the selected collection when the component mounts
-        if (collectionName && selectedDocument) {
+        if (collectionName && extractedData.length > 0) {
+          // Find the selected document based on collectionName
+          const selectedDocument = extractedData.find(
+            doc => doc.dynamic_collection_name.toLowerCase() === collectionName
+          );
+    
+          if (selectedDocument) {
             // Parse the JSON string in extracted_data and set it as data
             const parsedData = JSON.parse(selectedDocument.extracted_data);
-            setData(parsedData);
+    
+            // Check if the data format includes 'columns' and 'data'
+            if (parsedData.columns && parsedData.data) {
+              // For image file format
+              setData(parsedData.data);
+            } else {
+              // For PDF, Word, Excel file format
+              setData(parsedData);
+            }
+          }
         }
-    }, [collectionName, selectedDocument]);
+      }, [collectionName, extractedData]);
+    
+      // Ensure that data is defined before attempting to map over it
+      const columns = data.length > 0 ? Object.keys(data[0]) : [];
 
 
     // const handleSaveChanges = () => {

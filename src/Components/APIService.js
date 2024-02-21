@@ -62,21 +62,27 @@ export default class APIService {
     });
   };
 
-  static UpdateUserData = (updatedData) => {
+  static patchUserProfile = (userData, userId) => {
     const token = localStorage.getItem('token');
-    return fetch('http://127.0.0.1:8000/api/update_user_profile/', {
-      method: 'PUT', // Use PUT method for updating data
+    // const userId = localStorage.getItem('userId'); // Assuming you have stored user ID in localStorage
+
+    const config = {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${token}`,
+        'Authorization': `Token ${token}`,
       },
-      body: JSON.stringify(updatedData),
-    }).then((response) => {
-      if (response.ok) {
+      body: JSON.stringify(userData),
+    };
+
+    return fetch(`http://127.0.0.1:8000/api/update_user_profile/${userId}/`, config)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         return response.json();
-      }
-      throw new Error('Failed to update user data');
-    });
+      })
+      .catch(error => Promise.reject(error));
   };
 
 
@@ -256,6 +262,49 @@ static deleteDocument = (documentId) => {
         'Authorization': `Token ${token}`,
       },
     }).then(response => response.json());
+  };
+
+
+  static fetchMainApiStats = () => {
+    return fetch('http://127.0.0.1:8000/main_api/fetch_dashboard_stats/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    }).then(response => response.json());
+  };
+
+  static fetchHandwritingStats = () => {
+    return fetch('http://127.0.0.1:8000/handwriting_recognition/fetch_handwriting_stats/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    }).then(response => response.json());
+  };
+
+  static fetchDashboardStats = async () => {
+    try {
+      const [mainApiStats, handwritingStats] = await Promise.all([
+        APIService.fetchMainApiStats(),
+        APIService.fetchHandwritingStats(),
+      ]);
+
+      // Combine the stats from both APIs
+      const combinedStats = {
+        totalDocuments: (mainApiStats.totalDocuments || 0) + (handwritingStats.handwrittenDocumentsCount || 0),
+        pdfDocuments: mainApiStats.pdfDocuments || 0,
+        wordDocuments: mainApiStats.wordDocuments || 0,
+        excelDocuments: mainApiStats.excelDocuments || 0,
+        imageDocuments: mainApiStats.imageDocuments || 0,
+        handwrittenDocuments: handwritingStats.handwrittenDocuments || 0,
+      };
+
+      return combinedStats;
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      throw error;
+    }
   };
 
 }

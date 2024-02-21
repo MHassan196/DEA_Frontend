@@ -490,7 +490,7 @@
 .prof-top {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .edit-btn {
@@ -500,6 +500,14 @@
   font-weight: 600;
   padding: 0 10px;
   margin-left: 10px;
+}
+.btn-change{
+  display: flex;
+  justify-content: flex-end;
+}
+.change-ps{
+  margin-right: 20px;
+  width: calc(67% - 30px);
 }
 
 .profPage {
@@ -616,7 +624,7 @@
   margin-right: 20px;
   margin-bottom: 20px;
   box-shadow: 0 0 10px 0 var(--main-color);
-  width: 280px;
+  width: 277px;
 }
 
 .docHeader {
@@ -630,13 +638,20 @@
   margin: 0;
   font-weight: bold;
   font-size: 1.2rem;
+  white-space: nowrap; 
+  width: 180px; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+  margin-bottom: 10px;
 }
 
 .docTitle p {
-  color: #777;
-  font-size: 0.9rem;
+  color: #b0aeae;
+  font-size: 1rem;
 }
-
+.firsthalf{
+  margin-bottom: 20px;
+}
 .docIcons {
   font-size: 1.5rem;
 }
@@ -736,7 +751,9 @@
   width: calc(100% - 20px);
   /* Adjust as needed */
 }
-
+.usernamedis{
+  color: #c2c2c2;
+}
 .in-detail .value textarea {
   height: 100px;
 }
@@ -1140,4 +1157,112 @@ h2 {
 }
 .badges-list{
   margin-top: 20px;
+}
+
+
+/* Dashboard  */
+
+.dash-head{
+  margin-bottom: 20px;
+}
+
+.statsbox{
+  background-color: var(--secmain-color);
+  margin: 10px 0;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 var(--main-color);
+}
+.statscardin{
+  background-color: #dedede;
+  
+}
+.statscard{
+  border-radius: 10px !important;
+}
+.dash-icons{
+  margin-right: 10px;
+}
+.DocName{
+  flex-grow: 1;
+  text-align: right;
+  font-size: 3.5rem !important;
+}
+.profname{
+  flex: 4;
+}
+
+.profsec-up{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.prof-editBtn{
+  background-color: none !important;
+}
+
+.lastprof{
+  border-bottom: none !important;
+}
+.iconprof{
+  font-size: 1.6rem !important;
+}
+
+.secondpart{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+.graphComp{
+  background-color: var(--secmain-color);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 var(--main-color);
+  width: 63%;
+  display: flex;
+  align-items: center;
+}
+.doughgraphComp{
+  background-color: var(--secmain-color);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 var(--main-color);
+  width: 49%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thirdpart{
+  margin-top: 30px;
+}
+
+.recentDocPart{
+  background-color: var(--secmain-color);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 var(--main-color);
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.dash-part{
+  width: 262px;
+  background-color: #dedede;
+  color: var(--main-color);
+}
+.dash-title p {
+  color: var(--secmain-color);
+}
+.dash-view, .dash-cogs{
+  background-color: var(--secmain-color);
+  color: #dedede;
+}
+.fourthpart{
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
 }
