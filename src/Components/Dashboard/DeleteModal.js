@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import '../../pages/MainPage.css'
 
 
-function UploadFileModal(props) {
+function DeleteModal(props) {
     const customStyles = {
         header: {
           backgroundColor: '#3b518c',
@@ -12,7 +12,7 @@ function UploadFileModal(props) {
           borderBottom: 'none',
         },
         body: {
-          fontSize: '16px',
+          fontSize: '18px',
           lineHeight: '2',
           backgroundColor: '#efefef'
         },
@@ -25,6 +25,11 @@ function UploadFileModal(props) {
           backgroundColor: '#3b518c',
           border: 'none'
         },
+        deleteButton: {
+          color: '#fff',
+          backgroundColor: '#3b518c',
+          border: 'none'
+        },
       };
     
     return (
@@ -33,29 +38,23 @@ function UploadFileModal(props) {
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      onConfirmDelete={props.onConfirmDelete} 
+      className="custom-modal-class"
     >
       <Modal.Header closeButton style={customStyles.header}>
         <Modal.Title id="contained-modal-title-vcenter" style={customStyles.closeButton}>
-        User Guidelines
+        Delete Data
         </Modal.Title>
       </Modal.Header>
       <Modal.Body style={customStyles.body}>
-        <ul>
-          <li><strong>File Formats:</strong> Upload PDF, Word, Excel or Image files.</li>
-          <li><strong>Data Extraction:</strong> System auto-extracts data; verify it in the dashboard.</li>
-          <li><strong>Data Viewing:</strong> Use "View Data" to inspect and verify tabular data.</li>
-          <li><strong>Customization:</strong> Customize data in "Customize Data" and save changes.</li>
-          <li><strong>Editing Data:</strong> Correct errors in "Edit Data" and save for accuracy.</li>
-          <li><strong>Image Files:</strong> Upload clear PNG or JPG images with tabular data.</li>
-          <li><strong>Data Storage:</strong> Securely store extracted data in the database.</li>
-          <li><strong>User Assistance:</strong> FAQ section and "Contact Us" for support.</li>
-        </ul>
+        <p>Are you sure you want to delete this data?</p>
       </Modal.Body>
       <Modal.Footer style={customStyles.footer}>
-        <Button onClick={props.onHide} style={customStyles.closeButton}>Close</Button>
+        <Button onClick={props.onConfirmDelete} style={customStyles.deleteButton} className="custom-delete-button-class">Yes</Button>
+        <Button onClick={props.onHide} style={customStyles.closeButton} className="custom-close-button-class">Close</Button>
       </Modal.Footer>
     </Modal>
     );
 }
 
-export default UploadFileModal
+export default DeleteModal

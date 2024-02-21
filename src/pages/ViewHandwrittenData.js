@@ -3,13 +3,29 @@ import "../pages/MainPage.css";
 import APIService from "../Components/APIService";
 import LoadingSkeleton from "../Components/LoadingSkeleton";
 import { useSnackbar } from 'notistack';
+import DeleteModal from '../Components/Dashboard/DeleteModal'
 
 
 function ViewHandwrittenData({ handleSidebarItemClick }) {
+  const [modalShow, setModalShow] = React.useState(false);
+  const [documentIdToDelete, setDocumentIdToDelete] = useState(null); 
   const [extractedData, setExtractedData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const { enqueueSnackbar } = useSnackbar(); // Destructure enqueueSnackbar from useSnackbar
+
+  const openModal = (documentId) => {
+    setDocumentIdToDelete(documentId);
+    setModalShow(true);
+  };
+
+  const handleDeleteIconClick = (documentId) => {
+    openModal(documentId);
+  };
+
+  useEffect(() => {
+    console.log(documentIdToDelete);
+  }, [documentIdToDelete]);
 
 
   useEffect(() => {
@@ -51,30 +67,64 @@ function ViewHandwrittenData({ handleSidebarItemClick }) {
     return `${day}/${month}/${year}`;
   };
 
-  const handleDeleteIconClick = (documentId) => {
-    // Call the deleteDocument API method from APIService
-    APIService.deleteHandwrittenDocument(documentId)
-      .then((response) => {
-        if (response.message) {
-          // Document deleted successfully
-          enqueueSnackbar('Data Deleted Successfully', { variant: 'success' });
+  // const handleDeleteIconClick = (documentId) => {
+  //   // Call the deleteDocument API method from APIService
+  //   APIService.deleteHandwrittenDocument(documentId)
+  //     .then((response) => {
+  //       if (response.message) {
+  //         // Document deleted successfully
+  //         enqueueSnackbar('Data Deleted Successfully', { variant: 'success' });
 
-          // Refresh the extracted data after deletion
-          fetchHandwrittenData();
-        } else {
-          enqueueSnackbar('Error Deleting Data', { variant: 'error' });
-          console.error("Error deleting document:", response.error);
-        }
-      })
-      .catch((error) => {
-        console.error("Error deleting document:", error);
-      });
-  };
+  //         // Refresh the extracted data after deletion
+  //         fetchHandwrittenData();
+  //       } else {
+  //         enqueueSnackbar('Error Deleting Data', { variant: 'error' });
+  //         console.error("Error deleting document:", response.error);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error deleting document:", error);
+  //     });
+  // };
 
   return (
 
     <div className='cont-text'>
       <h2>Extracted Handwritten Data</h2>
+
+      {
+        modalShow && (
+          <DeleteModal
+            show={modalShow}
+            onHide={() => {
+              setModalShow(false);
+              setDocumentIdToDelete(null); // Reset documentIdToDelete when modal is closed
+            }}
+            onConfirmDelete={() => {
+              // Call the deleteDocument API method from APIService
+              APIService.deleteHandwrittenDocument(documentIdToDelete)
+                .then((response) => {
+                  if (response.message) {
+                    enqueueSnackbar('Data Deleted Successfully', { variant: 'success' });
+                    // Refresh the extracted data after deletion
+                    fetchHandwrittenData();
+                  } else {
+                    enqueueSnackbar('Error Deleting Data', { variant: 'error' });
+                    console.error("Error deleting document:", response.error);
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error deleting document:", error);
+                })
+                .finally(() => {
+                  setModalShow(false); // Close the modal after deletion
+                  setDocumentIdToDelete(null); // Reset documentIdToDelete
+                });
+            }}
+          />
+        )
+      }
+
       {loading ? (
         <LoadingSkeleton />
       ) : (

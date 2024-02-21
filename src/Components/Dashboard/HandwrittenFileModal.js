@@ -7,7 +7,7 @@ import '../../pages/MainPage.css'
 function HandwrittenFileModal(props) {
     const customStyles = {
         header: {
-          backgroundColor: 'rgba(155, 167, 196, 0.936)',
+          backgroundColor: '#3b518c',
           color: '#fff',
           borderBottom: 'none',
         },
@@ -22,7 +22,7 @@ function HandwrittenFileModal(props) {
         },
         closeButton: {
           color: '#fff',
-          backgroundColor: 'rgba(155, 167, 196, 0.936)',
+          backgroundColor: '#3b518c',
           border: 'none'
         },
       };

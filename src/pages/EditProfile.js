@@ -144,7 +144,7 @@ function EditProfile({ handleSidebarItemClick }) {
             <div className="in-detail last">
               <div className="label">Password</div>
               <div className="value btn-change">
-                <button className='edit-btn change-ps'>Change Password</button>              
+                <button className='edit-btn change-ps' onClick={() => handleSidebarItemClick("change-ps")}>Change Password</button>              
               </div>
             </div>
           </div>

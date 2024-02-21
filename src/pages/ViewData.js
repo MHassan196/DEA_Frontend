@@ -4,15 +4,33 @@ import APIService from "../Components/APIService";
 import SingleData from "./SingleData";
 import LoadingSkeleton from "../Components/LoadingSkeleton";
 import { useSnackbar } from 'notistack';
+import DeleteModal from '../Components/Dashboard/DeleteModal'
 
 
 function ViewData({ handleSidebarItemClick }) {
+  const [modalShow, setModalShow] = React.useState(false);
   const [extractedData, setExtractedData] = useState([]);
+  const [documentIdToDelete, setDocumentIdToDelete] = useState(null); // New state to store the document ID to be deleted
   const [loading, setLoading] = useState(true);
   // const [selectedCollection, setSelectedCollection] = useState(null);
   // const [switchTurn, setSwitchTurn] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar(); // Destructure enqueueSnackbar from useSnackbar
+
+
+  const openModal = (documentId) => {
+    setDocumentIdToDelete(documentId);
+    setModalShow(true);
+  };
+
+  const handleDeleteIconClick = (documentId) => {
+    openModal(documentId);
+  };
+
+  useEffect(() => {
+    console.log(documentIdToDelete);
+  }, [documentIdToDelete]);
+
 
 
   useEffect(() => {
@@ -62,25 +80,25 @@ function ViewData({ handleSidebarItemClick }) {
     return `${day}/${month}/${year}`;
   };
 
-  const handleDeleteIconClick = (documentId) => {
-    // Call the deleteDocument API method from APIService
-    APIService.deleteDocument(documentId)
-      .then((response) => {
-        if (response.message) {
-          // Document deleted successfully
-          enqueueSnackbar('Data Deleted Successfully', { variant: 'success' });
+  // const handleDeleteIconClick = (documentId) => {
+  //   // Call the deleteDocument API method from APIService
+  //   APIService.deleteDocument(documentId)
+  //     .then((response) => {
+  //       if (response.message) {
+  //         // Document deleted successfully
+  //         enqueueSnackbar('Data Deleted Successfully', { variant: 'success' });
 
-          // Refresh the extracted data after deletion
-          fetchExtractedData();
-        } else {
-          enqueueSnackbar('Error Deleting Data', { variant: 'error' });
-          console.error("Error deleting document:", response.error);
-        }
-      })
-      .catch((error) => {
-        console.error("Error deleting document:", error);
-      });
-  };
+  //         // Refresh the extracted data after deletion
+  //         fetchExtractedData();
+  //       } else {
+  //         enqueueSnackbar('Error Deleting Data', { variant: 'error' });
+  //         console.error("Error deleting document:", response.error);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error deleting document:", error);
+  //     });
+  // };
 
   return (
     // <div className="cont-text">
@@ -147,8 +165,42 @@ function ViewData({ handleSidebarItemClick }) {
     //   )} */}
     // </div>
 
+    
+
     <div className='cont-text'>
       <h2>Extracted Data</h2>
+      {
+        modalShow && (
+          <DeleteModal
+            show={modalShow}
+            onHide={() => {
+              setModalShow(false);
+              setDocumentIdToDelete(null); // Reset documentIdToDelete when modal is closed
+            }}
+            onConfirmDelete={() => {
+              // Call the deleteDocument API method from APIService
+              APIService.deleteDocument(documentIdToDelete)
+                .then((response) => {
+                  if (response.message) {
+                    enqueueSnackbar('Data Deleted Successfully', { variant: 'success' });
+                    // Refresh the extracted data after deletion
+                    fetchExtractedData();
+                  } else {
+                    enqueueSnackbar('Error Deleting Data', { variant: 'error' });
+                    console.error("Error deleting document:", response.error);
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error deleting document:", error);
+                })
+                .finally(() => {
+                  setModalShow(false); // Close the modal after deletion
+                  setDocumentIdToDelete(null); // Reset documentIdToDelete
+                });
+            }}
+          />
+        )
+      }
       {loading ? (
         <LoadingSkeleton />
       ) : (
@@ -185,7 +237,10 @@ function ViewData({ handleSidebarItemClick }) {
                   >
                     <i className="fas fa-edit"></i>
                   </button>
-                  <button className="dataView" onClick={() => handleDeleteIconClick(doc.id)}>
+                  {/* <button className="dataView" onClick={() => handleDeleteIconClick(doc.id)}> */}
+                  <button className="dataView" onClick={() =>
+                    handleDeleteIconClick(doc.id) // Call handleDeleteIconClick on trash icon click
+                  }>
                     <i className="fas fa-trash"></i>
 
                   </button>

@@ -8,7 +8,7 @@ import DoughnutGraph from '../Components/DoughnutGraph';
 import RecentDoc from '../Components/RecentDoc';
 import LineGraph from '../Components/LineGraph';
 
-function Dashboard() {
+function Dashboard({handleSidebarItemClick}) {
 
 
 
@@ -24,12 +24,12 @@ function Dashboard() {
       <div className='secondpart'>
         {/* <div className='flex-1'>
         </div> */}
-          <ProfSection />
+          <ProfSection handleSidebarItemClick={handleSidebarItemClick} />
           <Graph />
       </div>
 
       <div className="thirdpart">
-        <RecentDoc />
+        <RecentDoc handleSidebarItemClick={handleSidebarItemClick} />
       </div>
 
       <div className="fourthpart">

@@ -43,7 +43,7 @@ const EditButton = styled(Button)({
     },
 });
 
-function ProfSection() {
+function ProfSection({handleSidebarItemClick}) {
     const [userData, setUserData] = useState(null);
 
 
@@ -69,6 +69,7 @@ function ProfSection() {
                 <EditButton
                     variant="contained"
                     className='prof-editBtn'
+                    onClick={() => handleSidebarItemClick("edit-profile")}
                 >
                     <Edit />
                 </EditButton>

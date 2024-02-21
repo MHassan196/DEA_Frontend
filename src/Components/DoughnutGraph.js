@@ -21,9 +21,9 @@ const DoughnutGraph = () => {
   });
 
   useEffect(() => {
-    // Fetch document statistics
-    APIService.fetchDashboardStats()
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        const data = await APIService.fetchDashboardStats();
         setGraphData((prevData) => ({
           ...prevData,
           datasets: [
@@ -33,10 +33,12 @@ const DoughnutGraph = () => {
             },
           ],
         }));
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error fetching graph data:', error);
-      });
+      }
+    };
+  
+    fetchData();
   }, []);
 
 

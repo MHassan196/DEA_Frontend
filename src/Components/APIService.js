@@ -46,54 +46,66 @@ export default class APIService {
     }).then((resp) => resp.json());
   };
 
-  static GetUserData = () => {
-    return fetch('http://127.0.0.1:8000/api/get_user_profile/', {
-      method: 'GET',
+  static ChangePassword = (body) => {
+    return fetch('http://127.0.0.1:8000/api/change_password/', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Token ${localStorage.getItem('token')}`, // Include the user's token for authentication
       },
-    }).then((response) => {
-      if (response.ok) {
-        return response.json(); // Return user data if the response is okay
-      } else {
-        throw new Error('Failed to fetch user data');
-      }
-    });
+      body: JSON.stringify(body),
+    }).then((resp) => resp.json());
   };
+
+
+  static GetUserData = () => {
+  return fetch('http://127.0.0.1:8000/api/get_user_profile/', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${localStorage.getItem('token')}`, // Include the user's token for authentication
+    },
+  }).then((response) => {
+    if (response.ok) {
+      return response.json(); // Return user data if the response is okay
+    } else {
+      throw new Error('Failed to fetch user data');
+    }
+  });
+};
 
   static patchUserProfile = (userData, userId) => {
-    const token = localStorage.getItem('token');
-    // const userId = localStorage.getItem('userId'); // Assuming you have stored user ID in localStorage
+  const token = localStorage.getItem('token');
+  // const userId = localStorage.getItem('userId'); // Assuming you have stored user ID in localStorage
 
-    const config = {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`,
-      },
-      body: JSON.stringify(userData),
-    };
-
-    return fetch(`http://127.0.0.1:8000/api/update_user_profile/${userId}/`, config)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .catch(error => Promise.reject(error));
+  const config = {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(userData),
   };
+
+  return fetch(`http://127.0.0.1:8000/api/update_user_profile/${userId}/`, config)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch(error => Promise.reject(error));
+};
 
 
   static uploadDataAPI = (formData) => {
-    return fetch('http://127.0.0.1:8000/main_api/upload/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-      body: formData,
-    })
+  return fetch('http://127.0.0.1:8000/main_api/upload/', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+    },
+    body: formData,
+  })
     .then(response => {
       if (!response.ok) {
         throw new Error('Data upload failed');
@@ -103,16 +115,16 @@ export default class APIService {
     .catch(error => {
       throw error;
     });
-  };
+};
 
   static uploadImageAPI = (formData) => {
-    return fetch('http://127.0.0.1:8000/main_api/upload/image/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-      body: formData,
-    })
+  return fetch('http://127.0.0.1:8000/main_api/upload/image/', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+    },
+    body: formData,
+  })
     .then(response => {
       if (!response.ok) {
         throw new Error('Image upload failed');
@@ -122,25 +134,25 @@ export default class APIService {
     .catch(error => {
       throw error;
     });
-  };
+};
 
   static fetchExtractedData = () => {
-    return fetch('http://127.0.0.1:8000/main_api/fetch_extracted_data/', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-    }).then(response => response.json());
-  };
+  return fetch('http://127.0.0.1:8000/main_api/fetch_extracted_data/', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+    },
+  }).then(response => response.json());
+};
   
   static fetchDocumentData = (collectionName) => {
-    return fetch(`http://127.0.0.1:8000/main_api/fetch_collection_data/${collectionName}/`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-    }).then(response => response.json());
-  };
+  return fetch(`http://127.0.0.1:8000/main_api/fetch_collection_data/${collectionName}/`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+    },
+  }).then(response => response.json());
+};
 
 
   // static updateDocumentData = (id, updatedData) => {
@@ -161,21 +173,21 @@ export default class APIService {
   // };
 
   static updateDocumentData = (id, updatedData) => {
-    const token = localStorage.getItem('token');
-    const formattedData = JSON.stringify(updatedData.map(item => ({ ...item }))); // Ensure each item is a separate object
-    return fetch(`http://127.0.0.1:8000/main_api/update_document/${id}/`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`,
-        },
-        body: formattedData,
-    }).then(response => {
-        if (response.ok) {
-            return response.json();
-        }
-        throw new Error('Failed to update document data');
-    });
+  const token = localStorage.getItem('token');
+  const formattedData = JSON.stringify(updatedData.map(item => ({ ...item }))); // Ensure each item is a separate object
+  return fetch(`http://127.0.0.1:8000/main_api/update_document/${id}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: formattedData,
+  }).then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error('Failed to update document data');
+  });
 };
 
 static deleteDocument = (documentId) => {
@@ -189,7 +201,7 @@ static deleteDocument = (documentId) => {
   }).then(response => response.json());
 };
 
-  
+
   // static updateCustomizeData = (id, updatedData) => {
   //   // const token = localStorage.getItem('token');
   //   return fetch(`http://127.0.0.1:8000/main_api/customize_document/${id}/`, {
@@ -208,13 +220,13 @@ static deleteDocument = (documentId) => {
   // };
 
   static uploadHandwrittenAPI = (formData) => {
-    return fetch('http://127.0.0.1:8000/handwriting_recognition/process_image/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-      body: formData,
-    })
+  return fetch('http://127.0.0.1:8000/handwriting_recognition/process_image/', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+    },
+    body: formData,
+  })
     .then(response => {
       if (!response.ok) {
         throw new Error('Image upload failed');
@@ -224,88 +236,88 @@ static deleteDocument = (documentId) => {
     .catch(error => {
       throw error;
     });
-  };
+};
 
 
   static fetchHandwrittenData = () => {
-    return fetch('http://127.0.0.1:8000/handwriting_recognition/fetch_handwritten_data/', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-    }).then(response => response.json());
-  };
+  return fetch('http://127.0.0.1:8000/handwriting_recognition/fetch_handwritten_data/', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+    },
+  }).then(response => response.json());
+};
 
   static updateHandwrittenDocument = (id, updatedData) => {
-    const token = localStorage.getItem('token');
-    return fetch(`http://127.0.0.1:8000/handwriting_recognition/update_handwritten_data/${id}/`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`,
-      },
-      body: JSON.stringify(updatedData),
-    }).then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error('Failed to update handwritten document data');
-    });
-  };
+  const token = localStorage.getItem('token');
+  return fetch(`http://127.0.0.1:8000/handwriting_recognition/update_handwritten_data/${id}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+    body: JSON.stringify(updatedData),
+  }).then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error('Failed to update handwritten document data');
+  });
+};
 
   static deleteHandwrittenDocument = (documentId) => {
-    const token = localStorage.getItem('token');
-    return fetch(`http://127.0.0.1:8000/handwriting_recognition/delete_hand_document/${documentId}/`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${token}`,
-      },
-    }).then(response => response.json());
-  };
+  const token = localStorage.getItem('token');
+  return fetch(`http://127.0.0.1:8000/handwriting_recognition/delete_hand_document/${documentId}/`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`,
+    },
+  }).then(response => response.json());
+};
 
 
   static fetchMainApiStats = () => {
-    return fetch('http://127.0.0.1:8000/main_api/fetch_dashboard_stats/', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-    }).then(response => response.json());
-  };
+  return fetch('http://127.0.0.1:8000/main_api/fetch_dashboard_stats/', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+    },
+  }).then(response => response.json());
+};
 
   static fetchHandwritingStats = () => {
-    return fetch('http://127.0.0.1:8000/handwriting_recognition/fetch_handwriting_stats/', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
-      },
-    }).then(response => response.json());
-  };
+  return fetch('http://127.0.0.1:8000/handwriting_recognition/fetch_handwriting_stats/', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Token ${localStorage.getItem('token')}`,
+    },
+  }).then(response => response.json());
+};
 
   static fetchDashboardStats = async () => {
-    try {
-      const [mainApiStats, handwritingStats] = await Promise.all([
-        APIService.fetchMainApiStats(),
-        APIService.fetchHandwritingStats(),
-      ]);
+  try {
+    const [mainApiStats, handwritingStats] = await Promise.all([
+      APIService.fetchMainApiStats(),
+      APIService.fetchHandwritingStats(),
+    ]);
 
-      // Combine the stats from both APIs
-      const combinedStats = {
-        totalDocuments: (mainApiStats.totalDocuments || 0) + (handwritingStats.handwrittenDocumentsCount || 0),
-        pdfDocuments: mainApiStats.pdfDocuments || 0,
-        wordDocuments: mainApiStats.wordDocuments || 0,
-        excelDocuments: mainApiStats.excelDocuments || 0,
-        imageDocuments: mainApiStats.imageDocuments || 0,
-        handwrittenDocuments: handwritingStats.handwrittenDocuments || 0,
-      };
+    // Combine the stats from both APIs
+    const combinedStats = {
+      totalDocuments: (mainApiStats.totalDocuments || 0) + (handwritingStats.handwrittenDocumentsCount || 0),
+      pdfDocuments: mainApiStats.pdfDocuments || 0,
+      wordDocuments: mainApiStats.wordDocuments || 0,
+      excelDocuments: mainApiStats.excelDocuments || 0,
+      imageDocuments: mainApiStats.imageDocuments || 0,
+      handwrittenDocuments: handwritingStats.handwrittenDocuments || 0,
+    };
 
-      return combinedStats;
-    } catch (error) {
-      console.error('Error fetching dashboard stats:', error);
-      throw error;
-    }
-  };
+    return combinedStats;
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    throw error;
+  }
+};
 
 }
 

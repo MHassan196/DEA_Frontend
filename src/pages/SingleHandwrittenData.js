@@ -59,9 +59,7 @@ function SingleHandwrittenData({ collectionName, handleSidebarItemClick }) {
                         <h2>{selectedDocument ? selectedDocument.name : ''}</h2>
                     </div>
                     <div className="dataOptions">
-                        <button className="downloadBtn">
-                            <i className="fas fa-download"></i>
-                        </button>
+                        
                         
                         <button className="CustBtn" onClick={() => handleEditIconClick(selectedDocument.id)}>
                             <i className="fas fa-edit"></i>

@@ -21,6 +21,7 @@ import EditData from './EditData';
 import ViewHandwrittenData from './ViewHandwrittenData';
 import SingleHandwrittenData from './SingleHandwrittenData';
 import EditHandwrittenData from './EditHandwrittenData';
+import ChangePassword from './ChangePassword';
 
 
 function MainPage() {
@@ -91,7 +92,7 @@ function MainPage() {
         <Header handleSidebarItemClick={handleSidebarItemClick} />
         
         <div className="main-content">
-          {selectedItem === 'dashboard' && <Dashboard />}
+          {selectedItem === 'dashboard' && <Dashboard handleSidebarItemClick={handleSidebarItemClick} />}
           {selectedItem === 'upload' && <UploadFile />}
           {selectedItem === 'handwritten' && <HandwrittenData />}
           {selectedItem === 'view' && <ViewData handleSidebarItemClick={handleSidebarItemClick} />}
@@ -101,6 +102,7 @@ function MainPage() {
           {selectedItem === 'faq' && <Faq />}
           {selectedItem === 'profile' && <Profile handleSidebarItemClick={handleSidebarItemClick} />}
           {selectedItem === 'edit-profile' && <EditProfile handleSidebarItemClick={handleSidebarItemClick} />}
+          {selectedItem === 'change-ps' && <ChangePassword handleSidebarItemClick={handleSidebarItemClick} />}
           {selectedItem === 'data' && <SingleData collectionName={selectedCollection} handleSidebarItemClick={handleSidebarItemClick} />}
           {selectedItem === 'editdata' && <EditData collectionName={selectedCollection} handleSidebarItemClick={handleSidebarItemClick} />}
           {selectedItem === 'custdata' && <CustSingleData collectionName={selectedCollection} handleSidebarItemClick={handleSidebarItemClick} />}

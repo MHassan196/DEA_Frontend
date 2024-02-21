@@ -1181,7 +1181,13 @@ h2 {
   border-radius: 10px !important;
 }
 .dash-icons{
-  margin-right: 10px;
+  margin-right: 20px;
+  font-size: 36px;
+  color: var(--secmain-color);
+}
+.doc-name{
+  font-size: 1.6rem !important;
+  font-weight: 500 !important;
 }
 .DocName{
   flex-grow: 1;
@@ -1246,7 +1252,13 @@ h2 {
   box-shadow: 0 0 10px 0 var(--main-color);
   width: 100%;
   display: flex;
+  flex-direction: column;
+}
+.dash-prof-top{
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .dash-part{
@@ -1265,4 +1277,28 @@ h2 {
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
+}
+
+
+
+/* CHange Password  */
+
+.changepass{
+  background-color: var(--secmain-color);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 var(--main-color);
+}
+
+
+
+
+.custom-close-button-class {
+  color: #fff;
+  background-color: #757575; /* Dark gray background for the close button */
+}
+
+.custom-delete-button-class {
+  color: #fff;
+  background-color: #3b518c; /* Darker red background for the delete button */
 }

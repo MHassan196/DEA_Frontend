@@ -78,6 +78,22 @@ function Profile({ handleSidebarItemClick }) {
     return `${day}/${month}/${year}`;
   };
 
+  const handleEyeIconClick = (collectionName) => {
+
+    handleSidebarItemClick("data", collectionName);
+  };
+
+  const handleCogsIconClick = (collectionName) => {
+
+    handleSidebarItemClick('custdata', collectionName);
+
+  };
+
+  const handleHandEyeIconClick = (id) => {
+    
+    handleSidebarItemClick("singlehanddata", id);
+  };
+
   return (
     <div className="cont-text">
       <div className="prof-top">
@@ -147,7 +163,7 @@ function Profile({ handleSidebarItemClick }) {
 
             <div className="prof-top">
               <h3>Recent Documents</h3>
-              <button className="edit-btn">View All</button>
+              <button className="edit-btn" onClick={() => handleSidebarItemClick('view')}>View All</button>
             </div>
             <div className="recentDocuments">
               {recentDocuments.map((doc) => (
@@ -184,10 +200,14 @@ function Profile({ handleSidebarItemClick }) {
                       <p>{doc.file.size}</p>
                     </div>
                     <div className="docActions">
-                      <button className="viewButton">
+                      <button className="viewButton" onClick={() =>
+                        handleEyeIconClick(
+                          doc.dynamic_collection_name.toLowerCase()
+                        )
+                      }>
                         <i className="fas fa-eye"></i>
                       </button>
-                      <button className="customizeButton">
+                      <button className="customizeButton" onClick={() => handleCogsIconClick(doc.dynamic_collection_name.toLowerCase())}>
                         <i className="fas fa-cogs"></i>
                       </button>
                       {/* Add more action buttons */}
@@ -202,7 +222,7 @@ function Profile({ handleSidebarItemClick }) {
 
             <div className="prof-top">
               <h3>Recent Handwritten Documents</h3>
-              <button className="edit-btn">View All</button>
+              <button className="edit-btn" onClick={() => handleSidebarItemClick('viewhanddata')}>View All</button>
             </div>
             <div className="recentDocuments">
               {recentHandwrittenDocuments.map((doc) => (
@@ -239,12 +259,15 @@ function Profile({ handleSidebarItemClick }) {
                       <p>{doc.file.size}</p>
                     </div>
                     <div className="docActions">
-                      <button className="viewButton">
+                      <button className="viewButton" onClick={() =>
+                      handleHandEyeIconClick(
+                        doc.id
+                      )
+                    // console.log(doc.id)
+                    }>
                         <i className="fas fa-eye"></i>
                       </button>
-                      <button className="customizeButton">
-                        <i className="fas fa-cogs"></i>
-                      </button>
+                      
                       {/* Add more action buttons */}
                     </div>
                   </div>

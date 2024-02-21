@@ -8,8 +8,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import APIService from './APIService';
 
-function RecentDoc() {
+function RecentDoc({ handleSidebarItemClick }) {
     const [recentDocuments, setRecentDocuments] = useState([])
+
+    const handleEyeIconClick = (collectionName) => {
+
+        handleSidebarItemClick("data", collectionName);
+    };
+
+    const handleCogsIconClick = (collectionName) => {
+
+        handleSidebarItemClick('custdata', collectionName);
+
+    };
 
     const fetchRecentDocuments = () => {
         APIService.fetchExtractedData()
@@ -47,61 +58,65 @@ function RecentDoc() {
         <div className="recentDocPart">
 
 
-            <div className="firsthalf">
 
 
-                <div className="prof-top">
-                    <h3>Recent Documents</h3>
-                    <button className="edit-btn">View All</button>
-                </div>
-                <div className="recentDocuments">
-                    {recentDocuments.map((doc) => (
-                        <div key={doc.id} className="documentCard dash-part">
-                            <div className="docHeader">
-                                <div className="docTitle dash-title">
-                                    <h4>{doc.name}</h4>
-                                    <p>{formatDate(doc.upload_date)}</p>
-                                </div>
-                                <div className="docIcons dash-icons">
-                                    {/* Add icons for different file types */}
-                                    {doc.file_type === "pdf" && <FontAwesomeIcon icon={faFilePdf} />}
-                                    {doc.file_type === "docx" && (
-                                        <FontAwesomeIcon icon={faFileWord} />
-                                    )}
-                                    {doc.file_type === "xlsx" && (
-                                        <FontAwesomeIcon icon={faFileExcel} />
-                                    )}
-                                    {doc.file_type === "xls" && (
-                                        <FontAwesomeIcon icon={faFileExcel} />
-                                    )}
-                                    {doc.file_type === "png" && (
-                                        <FontAwesomeIcon icon={faFileImage} />
-                                    )}
-                                    {doc.file_type === "jpg" && (
-                                        <FontAwesomeIcon icon={faFileImage} />
-                                    )}
 
-                                    {/* Add more icons for different file types */}
-                                </div>
+            <div className="prof-top dash-prof-top">
+                <h3>Recent Documents</h3>
+                <button className="edit-btn" onClick={() => handleSidebarItemClick('view')}>View All</button>
+            </div>
+            <div className="recentDocuments">
+                {recentDocuments.map((doc) => (
+                    <div key={doc.id} className="documentCard dash-part">
+                        <div className="docHeader">
+                            <div className="docTitle dash-title">
+                                <h4>{doc.name}</h4>
+                                <p>{formatDate(doc.upload_date)}</p>
                             </div>
-                            <div className="docDetails">
-                                <div>
-                                    <p>{doc.file.size}</p>
-                                </div>
-                                <div className="docActions">
-                                    <button className="viewButton dash-view">
-                                        <i className="fas fa-eye"></i>
-                                    </button>
-                                    <button className="customizeButton dash-cogs">
-                                        <i className="fas fa-cogs"></i>
-                                    </button>
-                                    {/* Add more action buttons */}
-                                </div>
+                            <div className="docIcons dash-icons">
+                                {/* Add icons for different file types */}
+                                {doc.file_type === "pdf" && <FontAwesomeIcon icon={faFilePdf} />}
+                                {doc.file_type === "docx" && (
+                                    <FontAwesomeIcon icon={faFileWord} />
+                                )}
+                                {doc.file_type === "xlsx" && (
+                                    <FontAwesomeIcon icon={faFileExcel} />
+                                )}
+                                {doc.file_type === "xls" && (
+                                    <FontAwesomeIcon icon={faFileExcel} />
+                                )}
+                                {doc.file_type === "png" && (
+                                    <FontAwesomeIcon icon={faFileImage} />
+                                )}
+                                {doc.file_type === "jpg" && (
+                                    <FontAwesomeIcon icon={faFileImage} />
+                                )}
+
+                                {/* Add more icons for different file types */}
                             </div>
                         </div>
-                    ))}
-                </div>
+                        <div className="docDetails">
+                            <div>
+                                <p>{doc.file.size}</p>
+                            </div>
+                            <div className="docActions">
+                                <button className="viewButton dash-view" onClick={() =>
+                                    handleEyeIconClick(
+                                        doc.dynamic_collection_name.toLowerCase()
+                                    )
+                                }>
+                                    <i className="fas fa-eye"></i>
+                                </button>
+                                <button className="customizeButton dash-cogs" onClick={() => handleCogsIconClick(doc.dynamic_collection_name.toLowerCase())}>
+                                    <i className="fas fa-cogs"></i>
+                                </button>
+                                {/* Add more action buttons */}
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
+
         </div>
     )
 }

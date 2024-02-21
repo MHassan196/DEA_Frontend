@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '../pages/MainPage.css'
 import APIService from '../Components/APIService';
 import { useSnackbar } from 'notistack';
+import SingleDataLoadingSkeleton from '../Components/SingleDataLoadingSkeleton';
 
 
 function CustSingleData({ collectionName, handleSidebarItemClick }) {
@@ -14,6 +15,7 @@ function CustSingleData({ collectionName, handleSidebarItemClick }) {
     const [showFieldsModal, setShowFieldsModals] = useState(false);
     const [selectedFields, setSelectedFields] = useState([]);
     const [availableFields, setAvailableFields] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const { enqueueSnackbar } = useSnackbar()
 
@@ -79,17 +81,22 @@ function CustSingleData({ collectionName, handleSidebarItemClick }) {
     console.log("Available Fields ", availableFields)
 
     const fetchExtractedData = () => {
+        setLoading(true)
         // Call the fetchExtractedData method from your APIService
         APIService.fetchExtractedData()
             .then(response => {
                 if (response.extracted_data) {
                     setExtractedData(response.extracted_data);
+                    setLoading(false)
                     // setAvailableFields(Object.keys(response.extracted_data[0]));
                 } else {
                     console.error('Error fetching extracted data:', response.error);
                 }
             })
-            .catch(error => console.error('Error fetching extracted data:', error));
+            .catch(error => {
+                console.error('Error fetching extracted data:', error);
+                setLoading(false); // Set loading to false in case of an error
+            });
     };
 
 
@@ -107,29 +114,29 @@ function CustSingleData({ collectionName, handleSidebarItemClick }) {
 
     useEffect(() => {
         if (collectionName && extractedData.length > 0) {
-          // Find the selected document based on collectionName
-          const selectedDocument = extractedData.find(
-            doc => doc.dynamic_collection_name.toLowerCase() === collectionName
-          );
-    
-          if (selectedDocument) {
-            // Parse the JSON string in extracted_data and set it as data
-            const parsedData = JSON.parse(selectedDocument.extracted_data);
-    
-            // Check if the data format includes 'columns' and 'data'
-            if (parsedData.columns && parsedData.data) {
-              // For image file format
-              setData(parsedData.data);
-            } else {
-              // For PDF, Word, Excel file format
-              setData(parsedData);
+            // Find the selected document based on collectionName
+            const selectedDocument = extractedData.find(
+                doc => doc.dynamic_collection_name.toLowerCase() === collectionName
+            );
+
+            if (selectedDocument) {
+                // Parse the JSON string in extracted_data and set it as data
+                const parsedData = JSON.parse(selectedDocument.extracted_data);
+
+                // Check if the data format includes 'columns' and 'data'
+                if (parsedData.columns && parsedData.data) {
+                    // For image file format
+                    setData(parsedData.data);
+                } else {
+                    // For PDF, Word, Excel file format
+                    setData(parsedData);
+                }
             }
-          }
         }
-      }, [collectionName, extractedData]);
-    
-      // Ensure that data is defined before attempting to map over it
-      const columns = data.length > 0 ? Object.keys(data[0]) : [];
+    }, [collectionName, extractedData]);
+
+    // Ensure that data is defined before attempting to map over it
+    const columns = data.length > 0 ? Object.keys(data[0]) : [];
 
     const handleSave = () => {
         const updatedData = data.map((record) => {
@@ -162,89 +169,95 @@ function CustSingleData({ collectionName, handleSidebarItemClick }) {
     return (
         <div>
             <div className='cont-text'>
-                <div className="dataHead">
+                {loading ? (
+                    <SingleDataLoadingSkeleton />
+                ) : (
                     <div>
-                        {/* Display the name of the selected document */}
-                        <h2>{selectedDocument ? selectedDocument.name : ''}</h2>
-                    </div>
-                    <div className="dataOptions">
-                        <button className="downloadBtn" onClick={handleSave}>
-                            Save
-                        </button>
-                        <button className="CustBtn" onClick={handleFieldsModalShow}>
-                            Select Fields
-                        </button>
-                        <button className="CustBtn" onClick={handleResetFields}>
-                            Reset
-                        </button>
+                        <div className="dataHead">
+                            <div>
+                                {/* Display the name of the selected document */}
+                                <h2>{selectedDocument ? selectedDocument.name : ''}</h2>
+                            </div>
+                            <div className="dataOptions">
+                                <button className="downloadBtn" onClick={handleSave}>
+                                    Save
+                                </button>
+                                <button className="CustBtn" onClick={handleFieldsModalShow}>
+                                    Select Fields
+                                </button>
+                                <button className="CustBtn" onClick={handleResetFields}>
+                                    Reset
+                                </button>
 
-                    </div>
+                            </div>
 
-                    <Modal show={showFieldsModal} onHide={handleFieldsModalClose} size='lg'>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Select Fields</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Form>
-                                <Form.Group controlId="fieldDropdown">
-                                    <Form.Label>Select Fields</Form.Label>
-                                    <Form.Control as="select" multiple onChange={(e) => handleFieldSelect(e.target.value)}>
-                                        {availableFields.map((column, index) => (
-                                            <option key={index} disabled={selectedFields.includes(column)}>{column}</option>
+                            <Modal show={showFieldsModal} onHide={handleFieldsModalClose} size='lg'>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Select Fields</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <Form>
+                                        <Form.Group controlId="fieldDropdown">
+                                            <Form.Label>Select Fields</Form.Label>
+                                            <Form.Control as="select" multiple onChange={(e) => handleFieldSelect(e.target.value)}>
+                                                {availableFields.map((column, index) => (
+                                                    <option key={index} disabled={selectedFields.includes(column)}>{column}</option>
+                                                ))}
+                                            </Form.Control>
+                                        </Form.Group>
+                                        <Form.Group controlId="selectedFields" className='badges-list'>
+                                            <Form.Label>Selected Fields</Form.Label>
+                                            <div>
+                                                {selectedFields.map((field, index) => (
+                                                    <Badge key={index} bg="secondary" className="mr-2 badge-custom">
+                                                        {field} <span onClick={() => handleRemoveField(field)}>&times;</span>
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        </Form.Group>
+                                    </Form>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="secondary" onClick={handleFieldsModalClose}>
+                                        Close
+                                    </Button>
+                                    <Button variant="primary" onClick={handleApplyFields}>
+                                        Apply Fields
+                                    </Button>
+                                </Modal.Footer>
+                            </Modal>
+                        </div>
+
+                        <div className="mt-4">
+                            <Table striped bordered hover variant="dark" className="custom-table" >
+                                <thead className="table-secondary">
+                                    <tr>
+                                        {columns.map((column, index) => (
+                                            <th key={index}>{column}</th>
                                         ))}
-                                    </Form.Control>
-                                </Form.Group>
-                                <Form.Group controlId="selectedFields" className='badges-list'>
-                                    <Form.Label>Selected Fields</Form.Label>
-                                    <div>
-                                        {selectedFields.map((field, index) => (
-                                            <Badge key={index} bg="secondary" className="mr-2 badge-custom">
-                                                {field} <span onClick={() => handleRemoveField(field)}>&times;</span>
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </Form.Group>
-                            </Form>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={handleFieldsModalClose}>
-                                Close
-                            </Button>
-                            <Button variant="primary" onClick={handleApplyFields}>
-                                Apply Fields
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
-                </div>
-
-                <div className="mt-4">
-                    <Table striped bordered hover variant="dark" className="custom-table" >
-                        <thead className="table-secondary">
-                            <tr>
-                                {columns.map((column, index) => (
-                                    <th key={index}>{column}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentRecords.map((record, recordIndex) => (
-                                <tr key={recordIndex}>
-                                    {columns.map((column, columnIndex) => (
-                                        <td key={columnIndex}>{record[column]}</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentRecords.map((record, recordIndex) => (
+                                        <tr key={recordIndex}>
+                                            {columns.map((column, columnIndex) => (
+                                                <td key={columnIndex}>{record[column]}</td>
+                                            ))}
+                                        </tr>
                                     ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                    <Pagination className="justify-content-center custom-pagination mt-4">
-                        {Array.from({ length: Math.ceil(data.length / recordsPerPage) }, (_, i) => (
-                            <Pagination.Item key={i + 1} active={i + 1 === currentPage} onClick={() => paginate(i + 1)} className="custom-page-item">
-                                {i + 1}
-                            </Pagination.Item>
-                        ))}
-                    </Pagination>
+                                </tbody>
+                            </Table>
+                            <Pagination className="justify-content-center custom-pagination mt-4">
+                                {Array.from({ length: Math.ceil(data.length / recordsPerPage) }, (_, i) => (
+                                    <Pagination.Item key={i + 1} active={i + 1 === currentPage} onClick={() => paginate(i + 1)} className="custom-page-item">
+                                        {i + 1}
+                                    </Pagination.Item>
+                                ))}
+                            </Pagination>
 
-                </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )
