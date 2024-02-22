@@ -77,6 +77,10 @@ const LoginForm = ({ onLoginSuccess }) => {
   const redirectToRegisterPage = () => {
     navigate('/register'); // Navigate to the registration page
   };
+  // Function to handle the redirection to the Forgot Password page
+  const redirectToForgotPage = () => {
+    navigate('/forgot'); // Navigate to the Forgot Password page
+  };
 
   return (
     <div className='container-fluid box'>
@@ -97,7 +101,7 @@ const LoginForm = ({ onLoginSuccess }) => {
             {passwordError && <div className="error-msg mb-2">{passwordError}</div>}
           </div>
           <div className='mb-5'>
-            <a href="/forgot-password" className='forgot-password-link'>Forgot Password?</a>
+            <a href="" className='forgot-password-link' onClick={redirectToForgotPage}>Forgot Password?</a>
           </div>
           <div>
             <input type="checkbox" className='form-check-input mb-4' name="" id="remember" />

@@ -5,7 +5,8 @@ import {
   faFilePdf,
   faFileExcel,
   faFileWord,
-  faFileImage
+  faFileImage,
+  faFile
 } from "@fortawesome/free-solid-svg-icons";
 import APIService from './APIService';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -62,7 +63,7 @@ function Stats() {
                 {type === 'Excel Documents' && <FontAwesomeIcon icon={faFileExcel} className='dash-icons' />}
                 {type === 'Image Documents' && <FontAwesomeIcon icon={faFileImage} className='dash-icons' />}
                 {type === 'Handwritten Documents' && <FontAwesomeIcon icon={faFileImage} className='dash-icons' />}
-                {type === 'Total Documents' && <FontAwesomeIcon icon={faFileImage} className='dash-icons' />}
+                {type === 'Total Documents' && <FontAwesomeIcon icon={faFile} className='dash-icons' />}
                 <Typography variant="h5" color="textSecondary" className='doc-name'>
                   {type}
                 </Typography>

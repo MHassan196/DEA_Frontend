@@ -57,6 +57,16 @@ export default class APIService {
     }).then((resp) => resp.json());
   };
 
+  static ForgotPassword = (body) => {
+    return fetch('http://127.0.0.1:8000/api/password_reset/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    }).then((resp) => resp.json());
+  };
+
 
   static GetUserData = () => {
   return fetch('http://127.0.0.1:8000/api/get_user_profile/', {
@@ -81,10 +91,9 @@ export default class APIService {
   const config = {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',
       'Authorization': `Token ${token}`,
     },
-    body: JSON.stringify(userData),
+    body: userData,
   };
 
   return fetch(`http://127.0.0.1:8000/api/update_user_profile/${userId}/`, config)
@@ -95,7 +104,7 @@ export default class APIService {
       return response.json();
     })
     .catch(error => Promise.reject(error));
-};
+}; 
 
 
   static uploadDataAPI = (formData) => {

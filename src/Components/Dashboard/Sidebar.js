@@ -62,8 +62,8 @@ const Sidebar = ({handleSidebarItemClick}) => {
                     </li>
                     <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('handwritten')}>
                         <div >
-                            <i className="fas fa-file-lines"></i>
-                            {isSidebarOpen && <span>Handwritten Data</span>}
+                            <i className="fa-solid fa-file-arrow-up"></i>
+                            {isSidebarOpen && <span>Upload Handwritten File</span>}
                         </div>
                     </li>
                     <li className={`${isSidebarOpen ? '' : 'sm-li'}`} onClick={() => handleSidebarItemClick('view')}>

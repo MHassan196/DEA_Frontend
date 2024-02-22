@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import MainPage from './pages/MainPage';
 import './global-styles.css';
 import { SnackbarProvider } from 'notistack';
+import ForgotPassword from './Components/ForgotPassword';
 
 function Router() {
   return(
@@ -17,6 +18,7 @@ function Router() {
       <Routes>
         <Route exact path="/" Component={LoginPage} />
         <Route exact path="/register" Component={RegisterPage} />
+        <Route exact path="/forgot" Component={ForgotPassword} />
         <Route exact path="/main" Component={MainPage} />
         
       </Routes>
